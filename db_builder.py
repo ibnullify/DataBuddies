@@ -7,10 +7,10 @@ HW<09 -- No Treble
 
 import sqlite3   #enable control of an sqlite database
 import csv       #facilitates CSV I/O
-#import os Used for os.remove()
+import os #Used for os.remove()
 
 f="discobandit.db"
-#os.remove(f) Used During Testing to remove file at the beginning
+os.remove(f) #Used During Testing to remove file at the beginning
 
 db = sqlite3.connect(f) #open if f exists, otherwise create
 c = db.cursor()    #facilitate db ops
@@ -34,7 +34,10 @@ def populate():
 #INSERT YOUR POPULATE CODE IN THIS ZONE
 
 populate()
-
+q = "SELECT name, peeps.id, mark FROM peeps, courses WHERE peeps.id = courses.id;"
+foo = c.execute(q)
+for bar in foo:
+    print bar
 #==========================================================
 db.commit() #save changes
 db.close()  #close database
