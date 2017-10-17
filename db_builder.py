@@ -30,14 +30,31 @@ def populate():
         command = "INSERT INTO courses VALUES (\"" + row["code"] + " \", " + row["mark"] +  ", " + row["id"] + ")"
         c.execute(command)
 
-#==========================================================
-#INSERT YOUR POPULATE CODE IN THIS ZONE
+def main():
+    populate()
+    students_to_grades = makeDict()
 
-populate()
-q = "SELECT name, peeps.id, mark FROM peeps, courses WHERE peeps.id = courses.id;"
-foo = c.execute(q)
-for bar in foo:
-    print bar
-#==========================================================
-db.commit() #save changes
-db.close()  #close database
+    db.commit() #save changes
+    db.close()  #close database
+
+'''
+Creates a Dictionary with every student as an entry
+Each student is mapped to another Dictionary
+Which contains all of the classes theyve take and recieved a grade for
+'''
+def makeDict():
+    command = "SELECT name, peeps.id, mark, code FROM peeps, courses WHERE peeps.id = courses.id;"
+    result = c.execute(command)
+    dict = {}
+    #Results returns a touple of:
+    #(name, ID, Grade, class)
+    for grade in result:
+        #{Student name : {Class: Grade, Class: Grade, ...}, Student name: {...}, ...}
+        if not grade[0] in dict: #If this is the first grade we see of the student
+            dict[grade[0]] = {grade[3]:grade[2]} #Create a new dict for them and place their first grade
+        else:
+            dict[grade[0]][grade[3]] = grade[2] #Otherwise add their new grade
+    #print(dict)
+    return dict
+
+main()
