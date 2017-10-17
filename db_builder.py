@@ -1,8 +1,8 @@
 '''
-Anish Shenoy
+Anish Shenoy, Ibnul Jahan
 SoftDev1 pd7
-HW<09 -- No Treble
-2017-10-14
+HW10 -- Average
+2017-10-17
 '''
 
 import sqlite3   #enable control of an sqlite database
@@ -15,6 +15,14 @@ os.remove(f) #Used During Testing to remove file at the beginning
 db = sqlite3.connect(f) #open if f exists, otherwise create
 c = db.cursor()    #facilitate db ops
 
+
+
+
+names_to_grades = {}
+ids_to_names = {}
+students_to_ids = {}
+
+    
 def populate():
     input_file = csv.DictReader(open("peeps.csv"))#Reads CSV
     c.execute("CREATE TABLE peeps(name TEXT, age INTEGER, id INTEGER)")
@@ -35,7 +43,7 @@ Creates a Dictionary with every student as an entry
 Each student is mapped to another Dictionary
 Which contains all of the classes theyve take and recieved a grade for
 '''
-def make_name_to_grade_dict():
+def make_names_to_grades_dict():
     command = "SELECT name, peeps.id, mark, code FROM peeps, courses WHERE peeps.id = courses.id;"
     result = c.execute(command)
     dict = {}
@@ -54,14 +62,14 @@ def make_name_to_grade_dict():
 '''
 Creates a Dictionary with every ID mapped to the student name
 '''
-def make_id_to_name_dict():
+def make_ids_to_names_dict():
     command = "SELECT name, id FROM peeps;" #Get names and Ids of all students
     result = c.execute(command)
     dict = {}
     for student in result:
         #print student
         #Dict of ID to student
-        dict[student[1]] = student[0]
+        dict[student[1]] = student[0].encode('utf-8')[:-1]
     return dict
 
 '''
@@ -112,21 +120,35 @@ def display_name_id_avg(student,students_to_ids,names_to_grades):
     id = students_to_ids[student]
     #print student + ", " + id + ", " + avg
     print student,id,avg
-    
-
-def main():
-    populate()
-    names_to_grades = make_name_to_grade_dict()
-    ids_to_names = make_id_to_name_dict()
-    students_to_ids = make_students_to_ids_dict()
-    #print calculate_avg("TOKiMONSTA", names_to_grades)
-    #print calculate_avg("sasha", names_to_grades)
-    #display_name_id_avg("TOKiMONSTA",students_to_ids,names_to_grades)
-    #display_name_id_avg("sasha",students_to_ids,names_to_grades)
-    for name in students_to_ids:
-        display_name_id_avg(name, students_to_ids, names_to_grades)
-    db.commit() #save changes
-    db.close()  #close database
 
 
-main()
+def make_averages_table():
+    command = "CREATE TABLE averages( id INTEGER, average INTEGER )"
+    c.execute(command)
+    print ids_to_names
+    for id in ids_to_names:
+        command = "INSERT INTO peeps_avg VALUES( " + str(id) + ", " + str(calculate_avg(ids_to_names[id], names_to_grades)) + ")"
+        c.execute(command)
+
+
+def add_courses():
+
+            
+populate()
+names_to_grades = make_names_to_grades_dict()
+ids_to_names = make_ids_to_names_dict()
+students_to_ids = make_students_to_ids_dict()
+print ids_to_names
+
+#print calculate_avg("TOKiMONSTA", names_to_grades)
+#print calculate_avg("sasha", names_to_grades)
+#display_name_id_avg("TOKiMONSTA",students_to_ids,names_to_grades)
+#display_name_id_avg("sasha",students_to_ids,names_to_grades)
+for name in students_to_ids:
+    display_name_id_avg(name, students_to_ids, names_to_grades)
+make_averages_table()
+db.commit() #save changes
+db.close()  #close database
+
+
+print ids_to_names
