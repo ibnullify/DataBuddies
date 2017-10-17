@@ -59,6 +59,7 @@ def make_id_to_name_dict():
     result = c.execute(command)
     dict = {}
     for student in result:
+        #print student
         #Dict of ID to student
         dict[student[1]] = student[0]
     return dict
@@ -83,15 +84,45 @@ def calculate_avg(student, names_to_grades):
         count += 1
     return float(sum/count)
 
-#def display_name_id_avg():
-
+'''
+Creates a Dictionary with every student as an entry
+Each student is mapped to an int which is their id
+'''
+def make_students_to_ids_dict():
+   command = "SELECT name, peeps.id FROM peeps;"
+   result = c.execute(command)
+   dict = {}
+   #Results returns a touple of:
+   #(name, ID)
+   for name_id in result:
+       #print name_id
+       #{Student name : ID, Student name: {...}, ...}
+       name = name_id[0].encode('utf-8')[:-1] #Remove the unicode character and the trialing space
+       if not name in dict: #If this is the first  we see of the student
+           dict[name] = name_id[1] #Create a new dict for them and place their first grade
+   #print(dict)
+   return dict
+    
+'''
+prints the combination of the name, id, and average of a student
+'''    
+def display_name_id_avg(student,students_to_ids,names_to_grades):
+    avg = calculate_avg(student, names_to_grades)
+    #print students_to_ids["TOKiMONSTA"]
+    id = students_to_ids[student]
+    #print student + ", " + id + ", " + avg
+    print student,id,avg
+    
 
 def main():
     populate()
     names_to_grades = make_name_to_grade_dict()
     ids_to_names = make_id_to_name_dict()
+    students_to_ids = make_students_to_ids_dict()
     #print calculate_avg("TOKiMONSTA", names_to_grades)
     #print calculate_avg("sasha", names_to_grades)
+    display_name_id_avg("TOKiMONSTA",students_to_ids,names_to_grades)
+    display_name_id_avg("sasha",students_to_ids,names_to_grades)
     db.commit() #save changes
     db.close()  #close database
 
