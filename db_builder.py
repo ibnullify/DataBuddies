@@ -123,7 +123,7 @@ def display_name_id_avg(student,students_to_ids,names_to_grades):
 
 
 def make_averages_table():
-    command = "CREATE TABLE averages( id INTEGER, average INTEGER )"
+    command = "CREATE TABLE peeps_avg( id INTEGER, average INTEGER )"
     c.execute(command)
     print ids_to_names
     for id in ids_to_names:
@@ -131,7 +131,9 @@ def make_averages_table():
         c.execute(command)
 
 
-def add_courses():
+def add_courses(code , mark , id):
+    command = "INSERT INTO courses VALUES (" +code + ", " + str(mark) +  ", " + str(id) + ")"
+    c.execute
 
             
 populate()
@@ -147,6 +149,7 @@ print ids_to_names
 for name in students_to_ids:
     display_name_id_avg(name, students_to_ids, names_to_grades)
 make_averages_table()
+add_courses("systems", 100, 2)
 db.commit() #save changes
 db.close()  #close database
 
