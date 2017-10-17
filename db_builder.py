@@ -54,7 +54,7 @@ def make_name_to_grade_dict():
 '''
 Creates a Dictionary with every ID mapped to the student name
 '''
-def Id_to_name():
+def make_id_to_name_dict():
     command = "SELECT name, id FROM peeps;" #Get names and Ids of all students
     result = c.execute(command)
     dict = {}
@@ -67,7 +67,7 @@ def Id_to_name():
 Takes in a student name and a names_to_grade dict
 Returns the grades of the student
 '''
-def getGrades(student, names_to_grades):
+def get_grades(student, names_to_grades):
     return names_to_grades[student]
 
 '''
@@ -77,7 +77,7 @@ Returns the average of that student
 def calculate_avg(student, names_to_grades):
     sum = 0
     count = 0
-    grade_dict = getGrades(student, names_to_grades)
+    grade_dict = get_grades(student, names_to_grades)
     for grade in grade_dict.values():
         sum += grade
         count += 1
@@ -89,9 +89,9 @@ def calculate_avg(student, names_to_grades):
 def main():
     populate()
     names_to_grades = make_name_to_grade_dict()
-    ids_to_names = Id_to_name()
+    ids_to_names = make_id_to_name_dict()
     #print calculate_avg("TOKiMONSTA", names_to_grades)
-    print calculate_avg("sasha", names_to_grades)
+    #print calculate_avg("sasha", names_to_grades)
     db.commit() #save changes
     db.close()  #close database
 
