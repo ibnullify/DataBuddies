@@ -121,8 +121,10 @@ def main():
     students_to_ids = make_students_to_ids_dict()
     #print calculate_avg("TOKiMONSTA", names_to_grades)
     #print calculate_avg("sasha", names_to_grades)
-    display_name_id_avg("TOKiMONSTA",students_to_ids,names_to_grades)
-    display_name_id_avg("sasha",students_to_ids,names_to_grades)
+    #display_name_id_avg("TOKiMONSTA",students_to_ids,names_to_grades)
+    #display_name_id_avg("sasha",students_to_ids,names_to_grades)
+    for name in students_to_ids:
+        display_name_id_avg(name, students_to_ids, names_to_grades)
     db.commit() #save changes
     db.close()  #close database
 
