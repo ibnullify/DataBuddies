@@ -118,7 +118,9 @@ def display_name_id_avg(student):
     #print student + ", " + id + ", " + avg
     print student,id,avg
 
-
+'''
+makes table of id and respective averages
+'''
 def make_averages_table():
     command = "CREATE TABLE peeps_avg( id INTEGER, average INTEGER )"
     c.execute(command)
@@ -126,7 +128,10 @@ def make_averages_table():
         command = "INSERT INTO peeps_avg VALUES( " + str(id) + ", " + str(calculate_avg(ids_to_names[id])) + ")"
         c.execute(command)
 
-
+'''
+adds a course, a course grade, and the id of the student who took the course to the courses table
+also updates names_to_grades dictionary
+'''
 def add_courses(code , mark , id):
     code += " " #adds trailing space which other courses also have
     command = "INSERT INTO courses VALUES (\"" + code + "\", " + str(mark) +  ", " + str(id) + ")"
@@ -134,6 +139,9 @@ def add_courses(code , mark , id):
     global names_to_grades #global allows us to reassign global variable
     names_to_grades = make_names_to_grades_dict()
 
+'''
+recalculates average for a student after more of their classes have been added in
+'''
 def update_avg(student):
     command = "UPDATE peeps_avg SET average = " + str(calculate_avg(student)) + " WHERE id = " + str(students_to_ids[student])
     c.execute(command)
@@ -144,6 +152,7 @@ populate()
 names_to_grades = make_names_to_grades_dict()
 ids_to_names = make_ids_to_names_dict()
 students_to_ids = make_students_to_ids_dict()
+
 print ""
 print("***TEST Look up student grades***")
 print("TOKiMONSTA: ")
@@ -172,6 +181,7 @@ print("dorfmeister: ")
 display_name_id_avg("dorfmeister")
 print("")
 
+#Do all the updating stuff
 make_averages_table()
 add_courses("systems2", 85, 2)
 add_courses("softdev2", 55, 4)
