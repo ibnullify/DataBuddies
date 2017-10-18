@@ -48,10 +48,11 @@ def make_names_to_grades_dict():
     for grade in result:
         #{Student name : {Class: Grade, Class: Grade, ...}, Student name: {...}, ...}
         name = grade[0].encode('utf-8')[:-1] #Remove the unicode character and the trialing space
+        course = grade[3].encode('utf-8')[:-1]
         if not name in dict: #If this is the first grade we see of the student
-            dict[name] = {grade[3]:grade[2]} #Create a new dict for them and place their first grade
+            dict[name] = {course:grade[2]} #Create a new dict for them and place their first grade
         else:
-            dict[name][grade[3]] = grade[2] #Otherwise add their new grade
+            dict[name][course] = grade[2] #Otherwise add their new grade
     #print(dict)
     return dict
 
@@ -121,33 +122,62 @@ def display_name_id_avg(student):
 def make_averages_table():
     command = "CREATE TABLE peeps_avg( id INTEGER, average INTEGER )"
     c.execute(command)
-    print ids_to_names
     for id in ids_to_names:
         command = "INSERT INTO peeps_avg VALUES( " + str(id) + ", " + str(calculate_avg(ids_to_names[id])) + ")"
         c.execute(command)
 
 
 def add_courses(code , mark , id):
+    code += " " #adds trailing space which other courses also have
     command = "INSERT INTO courses VALUES (\"" + code + "\", " + str(mark) +  ", " + str(id) + ")"
+    c.execute(command)
+    global names_to_grades #global allows us to reassign global variable
+    names_to_grades = make_names_to_grades_dict()
+
+def update_avg(student):
+    command = "UPDATE peeps_avg SET average = " + str(calculate_avg(student)) + " WHERE id = " + str(students_to_ids[student])
     c.execute(command)
 
 
+#Do All of the initial stuff
 populate()
 names_to_grades = make_names_to_grades_dict()
 ids_to_names = make_ids_to_names_dict()
 students_to_ids = make_students_to_ids_dict()
-print ids_to_names
+print ""
+print("***TEST Look up student grades***")
+print("TOKiMONSTA: ")
+print(get_grades("TOKiMONSTA"))
+print("sasha: ")
+print(get_grades("sasha"))
+print("dorfmeister: ")
+print(get_grades("dorfmeister"))
+print("")
 
-print calculate_avg("TOKiMONSTA")
-print calculate_avg("sasha")
-display_name_id_avg("TOKiMONSTA")
+print("***TEST compute avg***")
+print("TOKiMONSTA: ")
+print(calculate_avg("TOKiMONSTA"))
+print("digweed: ")
+print(calculate_avg("digweed"))
+print("dorfmeister: ")
+print(calculate_avg("dorfmeister"))
+print("")
+
+print("***TEST display_name_id_avg")
+print("tiesto: ")
+display_name_id_avg("tiesto")
+print("sasha: ")
 display_name_id_avg("sasha")
-for name in students_to_ids:
-    display_name_id_avg(name)
+print("dorfmeister: ")
+display_name_id_avg("dorfmeister")
+print("")
+
 make_averages_table()
-add_courses("systems", 100, 2)
+add_courses("systems2", 85, 2)
+add_courses("softdev2", 55, 4)
+add_courses("WesternPoliticalTheory", 95, 5)
+update_avg(ids_to_names[2])
+update_avg(ids_to_names[4])
+update_avg(ids_to_names[5])
 db.commit() #save changes
 db.close()  #close database
-
-
-print ids_to_names
